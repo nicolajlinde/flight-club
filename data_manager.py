@@ -1,9 +1,14 @@
+import smtplib
+
 import requests
 from flight_search import FlightSearch
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
+USERNAME = os.getenv("USER")
+PASSWORD = os.getenv("PASSWORD")
 
 
 class DataManager(FlightSearch):
@@ -44,9 +49,9 @@ class DataManager(FlightSearch):
                 response = requests.put(url=f"{self.sheety_endpoint}/{i + 2}", json=params, headers=headers)
                 print(response.text)
                 response.raise_for_status()
-                i += 1
 
-    def insert_data_to_google_sheets(self):
+    def insert_data_to_google_sheets(self, date_from, date_to):
+        # TODO: Check only for direct flights
         i = 2
         self.update_aita_codes()
         sheet_data = self.get_data_from_google_sheets()["prices"]
@@ -54,8 +59,8 @@ class DataManager(FlightSearch):
             # Flight deals
             deals = self.search_flight_deals(
                 {sheet['iataCode']},
-                "01/08/2022",
-                "01/08/2022")["data"]
+                date_from,
+                date_to)["data"]
 
             s = slice(0, 1)
             flight_data = deals[s][0]
@@ -68,10 +73,19 @@ class DataManager(FlightSearch):
 
                 params = {
                     "price": {
-                        "lowestPrice": flight_data["price"],
+                        "lowestPrice": f"£{flight_data['price']}",
                     }
                 }
 
                 response = requests.put(url=f"{self.sheety_endpoint}/{i}", json=params, headers=headers)
                 response.raise_for_status()
                 i += 1
+
+                with smtplib.SMTP("smtp.gmail.com", 587) as connection:
+                    connection.starttls()
+                    connection.login(user=USERNAME, password=PASSWORD)
+                    connection.sendmail(
+                        from_addr=USERNAME,
+                        to_addrs="nicolajlpedersen@gmail.com",
+                        msg=f"Subject: Tilbud på flyrejse\n\nLow price alert! Only £{flight_data['price']} to fly from CPH to {sheet['iataCode']} from {date_from} to {date_to}"
+                    )

@@ -5,5 +5,5 @@ import data_manager
 
 # Google sheet data
 google = data_manager.DataManager()
-google.insert_data_to_google_sheets()
+google.insert_data_to_google_sheets("01/08/2022", "01/08/2022")
 

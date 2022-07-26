@@ -1,11 +1,13 @@
 import requests
 import os
 from dotenv import load_dotenv
+import smtplib
 load_dotenv()
 
 
 class FlightSearch:
     def __init__(self):
+        super().__init__()
         self.flight_endpoint = os.getenv('FLIGHT_ENDPOINT')
         self.flight_api = os.getenv('FLIGHT_API')
         self.flight_id = os.getenv('FLIGHT_ID')
@@ -17,7 +19,7 @@ class FlightSearch:
         }
 
         flight_params = {
-            "fly_from": "BLL, AAL, CPH",
+            "fly_from": "CPH",
             "fly_to": fly_to,
             "date_from": date_from,
             "date_to": date_to
