@@ -28,7 +28,7 @@ class Users:
             },
         }
 
-        response = requests.post(url=f"{USER_ENDPOINT}", json=params, headers=headers)
+        response = requests.post(url=f"{self.sheety_endpoint}", json=params, headers=headers)
         response.raise_for_status()
 
     def get_user_data(self):

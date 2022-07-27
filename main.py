@@ -6,7 +6,7 @@ import users
 # Users
 user = Users()
 user.create_user_account()
-data = user.get_user_data()
+data = user.get_user_data()["users"]
 
 emails = []
 for x in data:
