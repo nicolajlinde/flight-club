@@ -12,7 +12,7 @@ class FlightSearch:
         self.flight_api = os.getenv('FLIGHT_API')
         self.flight_id = os.getenv('FLIGHT_ID')
 
-    def search_flight_deals(self, fly_to: [], date_from: str, date_to: str):
+    def search_flight_deals(self, fly_to: [], date_from: str, date_to: str, stops):
         headers = {
             "Content-Type": "application/json",
             "apikey": self.flight_api
@@ -22,7 +22,9 @@ class FlightSearch:
             "fly_from": "CPH",
             "fly_to": fly_to,
             "date_from": date_from,
-            "date_to": date_to
+            "date_to": date_to,
+            "max_stopovers": stops,
+            "curr": "DKK"
         }
 
         response = requests.get(url=self.flight_endpoint, params=flight_params, headers=headers)
